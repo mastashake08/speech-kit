@@ -1,6 +1,6 @@
 export default class SpeechKit {
 
-  constructor () {
+  constructor (continuous = true, interimResults = true) {
     let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
     let language = window.navigator.userLanguage || window.navigator.language
