@@ -7,6 +7,8 @@
 [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/jyroneparker)
 [![CodeLife Discord online members](https://badgen.net/discord/online-members/j3ATUEW)](https://discord.gg/j3ATUEW)
 
+Simplifying the Speech Synthesis and Speech Recognition engines for Javascript. Listen for commands and perform callback actions, make the browser speak and transcribe your speech!
+
 # Features
 - Speak Commands
 - Listen for voice commands
@@ -24,11 +26,11 @@ import SpeechKit from '@mastashake08/speech-kit'
 
 ### Instantiate A New Instance
 ```
-new SpeechKit()
+new SpeechKit(options)
 ```
 
 # Contributing
 If you want to add functionality or fix a bug please provide a PR!
 
 # Sponsorships
-This project is free for public use and will always be in perpetuity. That being said a brotha got bills to pay and ish! If you would like to sponsor this and all of my open source projects, then please consider becoming a patron on (https://patreon.com/mastashake08)[Patreon] or a one time donation via (https://cash.me/$mastashake08) [Cash App]
+This project is free for public use and will always be in perpetuity. That being said a brotha got bills to pay and ish! If you would like to sponsor this and all of my open source projects, then please consider becoming a patron on [Patreon](https://patreon.com/mastashake08) or a one time donation via [Cash App](https://cash.me/$mastashake08)
