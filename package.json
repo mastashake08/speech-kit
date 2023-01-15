@@ -1,0 +1,27 @@
+{
+  "name": "speech-kit",
+  "version": "1.0.0",
+  "description": "Package for simplifying the Speech Recognition and Speech Utterence process.",
+  "main": "SpeechKit.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mastashake08/speech-kit.git"
+  },
+  "keywords": [
+    "speech",
+    "recognition",
+    "speech",
+    "grammar",
+    "speech",
+    "utterance"
+  ],
+  "author": "Mastashake08",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mastashake08/speech-kit/issues"
+  },
+  "homepage": "https://github.com/mastashake08/speech-kit#readme"
+}
