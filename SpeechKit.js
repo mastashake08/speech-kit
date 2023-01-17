@@ -92,6 +92,21 @@ export default class SpeechKit {
   }
 
   /**
+   * Return text as JSON.
+   * @returns {object} transcript
+  */
+
+  getTextAsJson () {
+    let text = ''
+    for(let i = 0; i < this.resultList.length; ++i) {
+      text += this.resultList[i][0].transcript + '\n'
+    }
+    let transcript = JSON.stringify(text)
+    return transcript
+
+  }
+
+  /**
    * Add grammar to the SpeechGrammarList from a URI.
    * @params {string} uri - URI that contains grammar
   */
