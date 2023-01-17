@@ -28,6 +28,22 @@ import SpeechKit from '@mastashake08/speech-kit'
 ```
 new SpeechKit(options)
 ```
+## Events
+<dl>
+<dt>speechkitstart</dt>
+<dd>Emits when speech recognition starts
+</dd>
+<dt>speechkitend</dt>
+<dd>Emits when speech recognition ends
+</dd>
+<dt>speechkitresult</dt>
+<dd>Emits when speech recognition result comes in
+</dd>
+<dt>speechkiterror</dt>
+<dd>Emits when speech recognition error occurs
+</dd>
+</dl>
+
 ## Functions
 
 <dl>
