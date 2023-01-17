@@ -21,7 +21,9 @@
     "grammar parse",
     "speech recognition",
     "speech synthesis",
-    "speech grammar"
+    "speech grammar",
+    "speech voices",
+    "voice recognition"
   ],
   "author": "Mastashake08",
   "license": "GPL",
