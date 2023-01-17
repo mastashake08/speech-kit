@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/mastashake08/speech-kit/issues"
   },
-  "homepage": "https://github.com/mastashake08/speech-kit#readme"
+  "homepage": "https://github.com/mastashake08/speech-kit#readme",
+  "devDependencies": {
+    "jsdoc-to-markdown": "^8.0.0"
+  }
 }
