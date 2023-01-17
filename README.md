@@ -1,5 +1,6 @@
 # Speech Kit
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+[![GPL license](https://img.shields.io/badge/License-GPL-blue.svg)](https://choosealicense.com/licenses/gpl-3.0/#)
+[![Version](https://img.shields.io/npm/v/@mastashake08/speech-kit)] (https://www.npmjs.com/package/@mastashake08/speech-kit)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/mastashake08/speech-kit/graphs/commit-activity)
 [![Website jyroneparker.com](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://jyroneparker.com/)
