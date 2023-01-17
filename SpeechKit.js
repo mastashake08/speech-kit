@@ -22,22 +22,22 @@ export default class SpeechKit {
     this.utterance = {}
     this.recognition.onstart = function() {
       const event = new Event('speechkitstart');
-      document.dispatch(event)
+      document.dispatchEvent(event)
     }
     this.recognition.onresult = function(event) {
       const evt = new CustomEvent('speechkitresult', { event: event });
       if(event.results[0].isFinal) {
         this.resultList = event.results
       }
-      document.dispatch(evt)
+      document.dispatchEvent(evt)
     }
     this.recognition.onerror = function(event) {
       const evt = new CustomEvent('speechkiterror', { event: event });
-      document.dispatch(evt)
+      document.dispatchEvent(evt)
     }
     this.recognition.onspeechend = function() {
       const event = new Event('speechkitend');
-      document.dispatch(event)
+      document.dispatchEvent(event)
      }
    }
 
