@@ -81,7 +81,7 @@ export default class SpeechKit {
    * @returns {Blob} transcript
   */
 
-  getText () {
+  getTextAsFile () {
     let text = ''
     for(let i = 0; i < this.resultList.length; ++i) {
       text += this.resultList[i][0].transcript + '\n'
@@ -116,7 +116,7 @@ export default class SpeechKit {
   }
 
   /**
-   * Add grammar to the SpeechGrammarList from a URI.
+   * Add grammar to the SpeechGrammarList from a Grammar String.
    * @params {string} grammar - String containing grammar
   */
 
@@ -162,6 +162,7 @@ export default class SpeechKit {
 
   /**
    * Set the SpeechSynthesisUtterance object with the text that is meant to be spoken.
+   @params {string} text - Text to be spoken
   */
 
   setSpeechText (text) {
@@ -170,7 +171,7 @@ export default class SpeechKit {
 
   /**
    * Set the SpeechSynthesisVoice object with the desired voice.
-   * @params {SpeechSynthesisVoice} voice
+   * @params {SpeechSynthesisVoice} voice - Voice to be spoken
   */
 
   setSpeechVoice (voice) {

@@ -60,14 +60,17 @@ new SpeechKit(options)
 <dt><a href="#getResultList">getResultList()</a> ⇒ <code>SpeechRecognitionResultList</code></dt>
 <dd><p>Get current SpeechRecognition resultsList.</p>
 </dd>
-<dt><a href="#getText">getText()</a> ⇒ <code>Blob</code></dt>
+<dt><a href="#getTextAsFile">getTextAsFile()</a> ⇒ <code>Blob</code></dt>
 <dd><p>Return text file with results.</p>
+</dd>
+<dt><a href="#getTextAsJson">getTextAsJson()</a> ⇒ <code>object</code></dt>
+<dd><p>Return text as JSON.</p>
 </dd>
 <dt><a href="#addGrammarFromUri">addGrammarFromUri()</a></dt>
 <dd><p>Add grammar to the SpeechGrammarList from a URI.</p>
 </dd>
 <dt><a href="#addGrammarFromString">addGrammarFromString()</a></dt>
-<dd><p>Add grammar to the SpeechGrammarList from a URI.</p>
+<dd><p>Add grammar to the SpeechGrammarList from a Grammar String.</p>
 </dd>
 <dt><a href="#getGrammarList">getGrammarList()</a> ⇒ <code>SpeechGrammarList</code></dt>
 <dd><p>Return current SpeechGrammarList.</p>
@@ -97,19 +100,19 @@ new SpeechKit(options)
 ## listen()
 Start listening for speech recognition.
 
-**Kind**: public function  
+**Kind**: global function  
 <a name="stopListen"></a>
 
 ## stopListen()
 Stop listening for speech recognition.
 
-**Kind**: public function  
+**Kind**: global function  
 <a name="speak"></a>
 
 ## speak(text)
 Use Speech Synthesis to speak text.
 
-**Kind**: public function  
+**Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -120,76 +123,84 @@ Use Speech Synthesis to speak text.
 ## getResultList() ⇒ <code>SpeechRecognitionResultList</code>
 Get current SpeechRecognition resultsList.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>SpeechRecognitionResultList</code> - - List of Speech Recognition results  
-<a name="getText"></a>
+<a name="getTextAsFile"></a>
 
-## getText() ⇒ <code>Blob</code>
+## getTextAsFile() ⇒ <code>Blob</code>
 Return text file with results.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>Blob</code> - transcript  
+<a name="getTextAsJson"></a>
+
+## getTextAsJson() ⇒ <code>object</code>
+Return text as JSON.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - transcript  
 <a name="addGrammarFromUri"></a>
 
 ## addGrammarFromUri()
 Add grammar to the SpeechGrammarList from a URI.
 
-**Kind**: public function  
+**Kind**: global function  
 **Params**: <code>string</code> uri - URI that contains grammar  
 <a name="addGrammarFromString"></a>
 
 ## addGrammarFromString()
-Add grammar to the SpeechGrammarList from a URI.
+Add grammar to the SpeechGrammarList from a Grammar String.
 
-**Kind**: public function  
+**Kind**: global function  
 **Params**: <code>string</code> grammar - String containing grammar  
 <a name="getGrammarList"></a>
 
 ## getGrammarList() ⇒ <code>SpeechGrammarList</code>
 Return current SpeechGrammarList.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>SpeechGrammarList</code> - current SpeechGrammarList object  
 <a name="getRecognition"></a>
 
 ## getRecognition() ⇒ <code>SpeechRecognition</code>
 Return the urrent SpeechRecognition object.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>SpeechRecognition</code> - current SpeechRecognition object  
 <a name="getSynth"></a>
 
 ## getSynth() ⇒ <code>SpeechSynthesis</code>
 Return the current Speech Synthesis object.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>SpeechSynthesis</code> - current instance of Speech Synthesis object  
 <a name="getVoices"></a>
 
 ## getVoices() ⇒ <code>Array.&lt;SpeechSynthesisVoice&gt;</code>
 Return the current voices available to the user.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>Array.&lt;SpeechSynthesisVoice&gt;</code> - Array of available Speech Synthesis Voices  
 <a name="setSpeechText"></a>
 
 ## setSpeechText()
 Set the SpeechSynthesisUtterance object with the text that is meant to be spoken.
 
-**Kind**: public function  
+**Kind**: global function  
+**Params**: <code>string</code> text - Text to be spoken  
 <a name="setSpeechVoice"></a>
 
 ## setSpeechVoice()
 Set the SpeechSynthesisVoice object with the desired voice.
 
-**Kind**: public function  
-**Params**: <code>SpeechSynthesisVoice</code> voice  
+**Kind**: global function  
+**Params**: <code>SpeechSynthesisVoice</code> voice - Voice to be spoken  
 <a name="getCurrentVoice"></a>
 
 ## getCurrentVoice() ⇒ <code>SpeechSynthesisVoice</code>
 Return the current voice being used in the utterance.
 
-**Kind**: public function  
+**Kind**: global function  
 **Returns**: <code>SpeechSynthesisVoice</code> - current voice
 
 # Contributing
