@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="https://www.jyroneparker.com">
+    <img src="https://github.com/mastashake08/speech-kit/blob/main/cover.png">
+  </a>
+</p>
 # Speech Kit
 [![GPL license](https://img.shields.io/badge/License-GPL-blue.svg)](https://choosealicense.com/licenses/gpl-3.0/#)
 [![Version](https://img.shields.io/npm/v/@mastashake08/speech-kit)](https://www.npmjs.com/package/@mastashake08/speech-kit)
