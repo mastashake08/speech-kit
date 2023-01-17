@@ -20,24 +20,24 @@ export default class SpeechKit {
     this.recognition.continuous = true;
     this.recognition.interimResults = true;
     this.utterance = {}
-    this.recognition.onstart = function(e) {
+    this.recognition.onstart = function() {
       const event = new Event('speechkitstart');
-      e.target.dispatch(event)
+      document.dispatch(event)
     }
     this.recognition.onresult = function(event) {
       const evt = new CustomEvent('speechkitresult', { event: event });
       if(event.results[0].isFinal) {
         this.resultList = event.results
       }
-      event.target.dispatch(evt)
+      document.dispatch(evt)
     }
     this.recognition.onerror = function(event) {
       const evt = new CustomEvent('speechkiterror', { event: event });
-      event.target.dispatch(evt)
+      document.dispatch(evt)
     }
-    this.recognition.onspeechend = function(e) {
+    this.recognition.onspeechend = function() {
       const event = new Event('speechkitend');
-      e.target.dispatch(event)
+      document.dispatch(event)
      }
    }
 
