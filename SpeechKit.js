@@ -12,7 +12,7 @@ export default class SpeechKit {
     let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
     let language = window.navigator.userLanguage || window.navigator.language
-    this.resultList = []
+    this.resultList = {}
     this.recognition = new SpeechRecognition()
     this.recognition.lang = language
     this.grammarList = new SpeechGrammarList()
@@ -27,7 +27,7 @@ export default class SpeechKit {
     this.recognition.onresult = function(event) {
       const evt = new CustomEvent('speechkitresult', { event: event });
       if(event.results[0].isFinal) {
-        ctx.resultList.push(event.results)
+        this.resultList = event.results
       }
       this.dispatch(evt)
     }
@@ -68,11 +68,11 @@ export default class SpeechKit {
   }
 
   /**
-   * Use Speech Synthesis to speak text.
-   * @returns {object}
+   * Get current SpeechRecognition resultsList.
+   * @returns {SpeechRecognitionResultList} - List of Speech Recognition results
   */
 
-  getReturnList () {
+  getResultList () {
     return this.resultList
   }
 
@@ -110,7 +110,7 @@ export default class SpeechKit {
   }
 
   /**
-    * Return the urrent SpeechGrammarList object.
+    * Return current SpeechGrammarList.
     * @returns {SpeechGrammarList} current SpeechGrammarList object
   */
 
