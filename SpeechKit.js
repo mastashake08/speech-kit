@@ -8,7 +8,7 @@ export default class SpeechKit {
    * @returns {SpeechKit}
   */
 
-  constructor ({continuous = false, interimResults = true}) {
+  constructor ({continuous = false, interimResults = true, pitch = 1.0, rate = 1.0}) {
     let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
     let language = window.navigator.userLanguage || window.navigator.language
@@ -20,16 +20,18 @@ export default class SpeechKit {
     this.recognition.continuous = true;
     this.recognition.interimResults = true;
     this.utterance = {}
+    this.pitch = pitch
+    this.rate = rate
     this.recognition.onstart = function() {
       const event = new Event('speechkitstart');
       document.dispatchEvent(event)
     }
     this.recognition.onresult = function(event) {
-      const evt = new CustomEvent('speechkitresult', { event: event });
       if(event.results[0].isFinal) {
         this.resultList = event.results
+        const evt = new CustomEvent('speechkitresult', { detail: this.resultList[0][0].transcript });
+        document.dispatchEvent(evt)
       }
-      document.dispatchEvent(evt)
     }
     this.recognition.onerror = function(event) {
       const evt = new CustomEvent('speechkiterror', { event: event });
@@ -174,6 +176,8 @@ export default class SpeechKit {
 
   setSpeechText (text) {
     this.utterance = new SpeechSynthesisUtterance(text)
+    this.utterance.pitch = this.pitch
+    this.utterance.rate = this.rate
   }
 
   /**
