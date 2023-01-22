@@ -77,15 +77,25 @@ export default class SpeechKit {
   }
 
   /**
+   * Return text
+   * @returns {string} resultList as text string
+  */
+
+    getText () {
+      let text = ''
+      for(let i = 0; i < this.resultList.length; ++i) {
+        text += this.resultList[i][0].transcript + '\n'
+      }
+      return text
+    }
+
+  /**
    * Return text file with results.
    * @returns {Blob} transcript
   */
 
   getTextAsFile () {
-    let text = ''
-    for(let i = 0; i < this.resultList.length; ++i) {
-      text += this.resultList[i][0].transcript + '\n'
-    }
+    const text = this.getText()
     let transcript = new Blob([text], { type: "text/plain"})
     return transcript
 
@@ -97,10 +107,7 @@ export default class SpeechKit {
   */
 
   getTextAsJson () {
-    let text = ''
-    for(let i = 0; i < this.resultList.length; ++i) {
-      text += this.resultList[i][0].transcript + '\n'
-    }
+    const text = this.getText()
     let transcript = JSON.stringify(text)
     return transcript
 
@@ -185,5 +192,31 @@ export default class SpeechKit {
 
   getCurrentVoice () {
     return this.utterance.voice
+  }
+
+  /**
+   * Share the text using the Web Share API or copy to Clipboard if not available
+   * @returns {null}
+  */
+
+  async share () {
+    const text = this.getText()
+
+    try {
+      if (!navigator.canShare) {
+        const type = "text/plain";
+        const blob = new Blob([text], { type });
+        const data = [new ClipboardItem({ [type]: blob })];
+        await navigator.clipboard.write(data)
+        alert ('Text copied to clipboard')
+      } else {
+        navigator.share({
+          text: text
+        })
+      }
+    } catch (e) {
+      alert('There was an error sharing!')
+    }
+
   }
 }

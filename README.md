@@ -66,6 +66,9 @@ new SpeechKit(options)
 <dt><a href="#getResultList">getResultList()</a> ⇒ <code>SpeechRecognitionResultList</code></dt>
 <dd><p>Get current SpeechRecognition resultsList.</p>
 </dd>
+<dt><a href="#getText">getText()</a> ⇒ <code>string</code></dt>
+<dd><p>Return text</p>
+</dd>
 <dt><a href="#getTextAsFile">getTextAsFile()</a> ⇒ <code>Blob</code></dt>
 <dd><p>Return text file with results.</p>
 </dd>
@@ -99,6 +102,9 @@ new SpeechKit(options)
 <dt><a href="#getCurrentVoice">getCurrentVoice()</a> ⇒ <code>SpeechSynthesisVoice</code></dt>
 <dd><p>Return the current voice being used in the utterance.</p>
 </dd>
+<dt><a href="#share">share()</a> ⇒ <code>null</code></dt>
+<dd><p>Share the text using the Web Share API or copy to Clipboard if not available</p>
+</dd>
 </dl>
 
 <a name="listen"></a>
@@ -131,6 +137,13 @@ Get current SpeechRecognition resultsList.
 
 **Kind**: global function  
 **Returns**: <code>SpeechRecognitionResultList</code> - - List of Speech Recognition results  
+<a name="getText"></a>
+
+## getText() ⇒ <code>string</code>
+Return text
+
+**Kind**: global function  
+**Returns**: <code>string</code> - resultList as text string  
 <a name="getTextAsFile"></a>
 
 ## getTextAsFile() ⇒ <code>Blob</code>
@@ -207,7 +220,13 @@ Set the SpeechSynthesisVoice object with the desired voice.
 Return the current voice being used in the utterance.
 
 **Kind**: global function  
-**Returns**: <code>SpeechSynthesisVoice</code> - current voice
+**Returns**: <code>SpeechSynthesisVoice</code> - current voice  
+<a name="share"></a>
+
+## share() ⇒ <code>null</code>
+Share the text using the Web Share API or copy to Clipboard if not available
+
+**Kind**: global function  
 
 # Contributing
 If you want to add functionality or fix a bug please provide a PR!
