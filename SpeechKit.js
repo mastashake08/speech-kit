@@ -201,7 +201,6 @@ export default class SpeechKit {
 
   async share () {
     const text = this.getText()
-
     try {
       if (!navigator.canShare) {
         const type = "text/plain";
