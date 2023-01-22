@@ -23,22 +23,26 @@ export default class SpeechKit {
     this.pitch = pitch
     this.rate = rate
     this.recognition.onstart = function() {
-      const event = new Event('speechkitstart');
+      const event = new Event('onspeechkitstart');
       document.dispatchEvent(event)
     }
     this.recognition.onresult = function(event) {
+      console.log(event)
       if(event.results[0].isFinal) {
         this.resultList = event.results
-        const evt = new CustomEvent('speechkitresult', { detail: this.resultList[0][0].transcript });
+        const evt = new CustomEvent('onspeechkitresult', { detail: {
+            transcript: this.resultList[0][0].transcript
+          }
+        });
         document.dispatchEvent(evt)
       }
     }
     this.recognition.onerror = function(event) {
-      const evt = new CustomEvent('speechkiterror', { event: event });
+      const evt = new CustomEvent('onspeechkiterror', { event: event });
       document.dispatchEvent(evt)
     }
     this.recognition.onspeechend = function() {
-      const event = new Event('speechkitend');
+      const event = new Event('onspeechkitend');
       document.dispatchEvent(event)
      }
    }
