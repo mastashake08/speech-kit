@@ -15,4 +15,10 @@
 [![CodeLife Discord online members](https://badgen.net/discord/online-members/j3ATUEW)](https://discord.gg/j3ATUEW)
 
 Simplifying the Speech Synthesis and Speech Recognition engines for Javascript. Listen for commands and perform callback actions, make the browser speak and transcribe your speech!
- 
+
+# Features
+- Speak Commands
+- Listen for voice commands
+- Add your own grammar
+- Transcribe words and output as file.
+- Generate SSML from text for fine tune editing. 

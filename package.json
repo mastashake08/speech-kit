@@ -24,7 +24,10 @@
     "speech grammar",
     "speech voices",
     "voice recognition",
-    "grammar"
+    "grammar",
+    "JSGF",
+    "Web Speech API",
+    "SSML"
   ],
   "author": "Mastashake08",
   "license": "GPL",
