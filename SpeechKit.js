@@ -17,8 +17,8 @@ export default class SpeechKit {
     this.recognition.lang = language
     this.grammarList = new SpeechGrammarList()
     this.synth = window.speechSynthesis || window.webkitspeechSynthesis
-    this.recognition.continuous = true;
-    this.recognition.interimResults = true;
+    this.recognition.continuous = continuous;
+    this.recognition.interimResults = interimResults;
     this.utterance = {}
     this.pitch = pitch
     this.rate = rate
@@ -62,14 +62,14 @@ export default class SpeechKit {
        document.dispatchEvent(event)
       }
 
-      this.synth.onvoiceschanged = function() {
+      this.synth.addEventListener('voiceschanged', () => {
         const v = this.getVoices()
         const event = new CustomEvent('onspeechkitvoiceschanged', { detail: {
             voices: v
-          }
-        });
+            }
+        })
         document.dispatchEvent(event)
-      }
+      })
    }
    /**
     * Start listening for speech recognition.
@@ -199,7 +199,8 @@ export default class SpeechKit {
   */
 
   getVoices () {
-    return this.synth.getVoices()
+    const voices = this.synth.getVoices()
+    return voices
   }
 
   /**
