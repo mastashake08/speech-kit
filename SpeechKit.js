@@ -25,12 +25,25 @@ export default class SpeechKit {
 
    }
    setListeners () {
+     this.recognition.onsoundend = function(event) {
+       const evt = new CustomEvent('onspeechkitsoundend', { detail: {
+         event: event
+       }});
+       document.dispatchEvent(evt)
+     }
+
+     this.recognition.onspeechend = function(event) {
+       const evt = new CustomEvent('onspeechkitspeechend', { detail: {
+         event: event
+       }});
+       document.dispatchEvent(evt)
+     }
+
      this.recognition.onstart = function() {
        const event = new Event('onspeechkitstart');
        document.dispatchEvent(event)
      }
      this.recognition.onresult = function(event) {
-       console.log(event)
        if(event.results[0].isFinal) {
          this.resultList = event.results
          const evt = new CustomEvent('onspeechkitresult', { detail: {
@@ -72,9 +85,7 @@ export default class SpeechKit {
   */
 
   speak (text) {
-    console.log(text)
     this.setSpeechText(text)
-
     this.synth.speak(this.utterance)
   }
 
@@ -266,7 +277,6 @@ export default class SpeechKit {
     const iterator1 = segmenterFr.segment(string1)[Symbol.iterator]();
     let xmlString = "<p>";
     ([...segmenterFr.segment(text)]).forEach(seg => {
-      console.log(seg)
       xmlString += `<s> ${seg.segment} </s>`
     })
     xmlString += `</p>`
