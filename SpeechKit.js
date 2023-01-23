@@ -47,7 +47,7 @@ export default class SpeechKit {
        if(event.results[0].isFinal) {
          this.resultList = event.results
          const evt = new CustomEvent('onspeechkitresult', { detail: {
-             transcript: this.resultList[0][0].transcript
+             results: this.resultList
            }
          });
          document.dispatchEvent(evt)
@@ -82,10 +82,14 @@ export default class SpeechKit {
   /**
    * Use Speech Synthesis to speak text.
    * @param {string} text - Text to be spoken
+   * @param {SpeechSynthesisVoice} [voice] - Optional parameter to change the voice that speaks
   */
 
-  speak (text) {
+  speak (text, voice = null) {
     this.setSpeechText(text)
+    if(voice != null) {
+      this.setSpeechVoice(voice)
+    }
     this.synth.speak(this.utterance)
   }
 
@@ -185,8 +189,8 @@ export default class SpeechKit {
     * @returns {SpeechSynthesisVoice[]} Array of available Speech Synthesis Voices
   */
 
-  getVoices () {
-    return this.synth.getVoices()
+  async getVoices () {
+    return await this.synth.getVoices()
   }
 
   /**
