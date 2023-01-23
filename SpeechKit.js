@@ -231,7 +231,7 @@ export default class SpeechKit {
   /**
    * Takes text and returns SSML encoded XML object
    * @params {string} - Text to convert
-   * @returns {XML Object} - XML DOM object in SSML format
+   * @returns {object} - XML DOM object in SSML format
   */
   createSSML (text) {
     const xmlString = `<speak> ${text} </speak>`
