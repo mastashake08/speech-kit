@@ -353,18 +353,18 @@ export default class SpeechKit {
         const sentence = xmlDoc.querySelector(idx)
         let parser = new DOMParser();
         const newBreak = `<break time="${time}ms"/> ${sentence} `
-        let newNode = parser.parseFromString(newBreak, "text/xml");
+        let newNode = parser.parseFromString(newBreak, "application/xml");
 
-        let sp1 = document.createElementNS("http://www.w3.org/1999/xhtml","break");
+        let sp1 = document.createElement("break");
         sp1.setAttribute('time', `${encodeURIComponent(time+"ms")}`)
 
         // Get the reference element
         let sp2 = xmlDoc.querySelector(idx);
         // Get the parent element
         let parentDiv = sp2.parentNode;
-
+        console.log(sp2.childNodes[0])
         // Insert the new element into before sp2
-        parentDiv.insertBefore(sp1, sp2);
+        sp2.insertBefore(sp1, sp2.childNodes[0].nextSibling);
 
       }
     })
