@@ -247,9 +247,30 @@ export default class SpeechKit {
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
        http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
-       xml:lang="${navigator.language}"><prosody rate="slow"> ${text} </prosody></speak>`
+       xml:lang="${navigator.language}"><prosody rate="slow"> ${this.parseSentenceSSML(text)} </prosody></speak>`
     const xmlDoc = this.parseSSML(xmlString)
     return new XMLSerializer().serializeToString(xmlDoc)
+
+  }
+
+  /**
+   * Takes sentence and returns SSML paragraph object with sentences.
+   * @params {string} xmlString - Text to convert
+   * @returns {string} xmlString - XML DOM object in SSML format
+  */
+
+  parseSentenceSSML (text) {
+    const segmenterFr = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
+    const string1 = text;
+
+    const iterator1 = segmenterFr.segment(string1)[Symbol.iterator]();
+    let xmlString = "<p>";
+    ([...segmenterFr.segment(text)]).forEach(seg => {
+      console.log(seg)
+      xmlString += `<s> ${seg.segment} </s>`
+    })
+    xmlString += `</p>`
+    return xmlString
 
   }
 
