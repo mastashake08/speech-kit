@@ -72,7 +72,9 @@ export default class SpeechKit {
   */
 
   speak (text) {
-    this.setSpeechText (text)
+    console.log(text)
+    this.setSpeechText(text)
+
     this.synth.speak(this.utterance)
   }
 
@@ -182,7 +184,12 @@ export default class SpeechKit {
   */
 
   setSpeechText (text) {
-    this.utterance = new SpeechSynthesisUtterance(text)
+    try {
+      this.utterance = new SpeechSynthesisUtterance(new XMLSerializer().serializeToString(this.parseSSML(text)))
+
+    } catch (e) {
+      this.utterance = new SpeechSynthesisUtterance(text)
+    }
     this.utterance.pitch = this.pitch
     this.utterance.rate = this.rate
   }
@@ -228,16 +235,42 @@ export default class SpeechKit {
       alert('There was an error sharing!')
     }
   }
+
   /**
    * Takes text and returns SSML encoded XML object
    * @params {string} - Text to convert
    * @returns {string} - XML DOM object in SSML format serialized to a string
   */
+  
   createSSML (text) {
-    const xmlString = `<speak> ${text} </speak>`
-    const parser = new DOMParser()
-    const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+    const xmlString = `<?xml version="1.0"?><speak> ${text} </speak>`
+    const xmlDoc = this.parseSSML(xmlString)
     return new XMLSerializer().serializeToString(xmlDoc)
 
+  }
+
+  /**
+   * Takes text and returns SSML object
+   * @params {string} xmlString - Text to convert
+   * @returns {object | string} xmlDoc - XML DOM object in SSML format or XML object serialized to string
+  */
+
+  parseSSML (xmlString) {
+    try {
+      const parser = new DOMParser()
+      const xmlDoc = parser.parseFromString(xmlString, "text/xml")
+
+      const errorNode = xmlDoc.querySelector('parsererror');
+
+      if (errorNode) {
+        // parsing failed
+        return xmlString
+      } else {
+        // parsing succeeded
+        return xmlDoc
+      }
+    } catch (e) {
+      alert(e.message)
+    }
   }
 }
