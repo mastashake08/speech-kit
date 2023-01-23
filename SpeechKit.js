@@ -16,7 +16,7 @@ export default class SpeechKit {
     this.recognition = new SpeechRecognition()
     this.recognition.lang = language
     this.grammarList = new SpeechGrammarList()
-    this.synth = window.speechSynthesis
+    this.synth = window.speechSynthesis || window.webkitspeechSynthesis
     this.recognition.continuous = true;
     this.recognition.interimResults = true;
     this.utterance = {}
@@ -60,6 +60,15 @@ export default class SpeechKit {
      this.recognition.onspeechend = function() {
        const event = new Event('onspeechkitend');
        document.dispatchEvent(event)
+      }
+
+      this.synth.onvoiceschanged = function() {
+        const v = this.getVoices()
+        const event = new CustomEvent('onspeechkitvoiceschanged', { detail: {
+            voices: v
+          }
+        });
+        document.dispatchEvent(event)
       }
    }
    /**
@@ -189,8 +198,8 @@ export default class SpeechKit {
     * @returns {SpeechSynthesisVoice[]} Array of available Speech Synthesis Voices
   */
 
-  async getVoices () {
-    return await this.synth.getVoices()
+  getVoices () {
+    return this.synth.getVoices()
   }
 
   /**
