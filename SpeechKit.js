@@ -231,13 +231,13 @@ export default class SpeechKit {
   /**
    * Takes text and returns SSML encoded XML object
    * @params {string} - Text to convert
-   * @returns {object} - XML DOM object in SSML format
+   * @returns {string} - XML DOM object in SSML format serialized to a string
   */
   createSSML (text) {
     const xmlString = `<speak> ${text} </speak>`
     const parser = new DOMParser()
     const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-    return xmlDoc
+    return new XMLSerializer().serializeToString(xmlDoc)
 
   }
 }
