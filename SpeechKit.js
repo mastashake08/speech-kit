@@ -190,8 +190,8 @@ export default class SpeechKit {
     } catch (e) {
       this.utterance = new SpeechSynthesisUtterance(text)
     }
-    this.utterance.pitch = this.pitch
-    this.utterance.rate = this.rate
+     this.utterance.pitch = this.pitch
+     this.utterance.rate = this.rate
   }
 
   /**
@@ -241,9 +241,13 @@ export default class SpeechKit {
    * @params {string} - Text to convert
    * @returns {string} - XML DOM object in SSML format serialized to a string
   */
-  
+
   createSSML (text) {
-    const xmlString = `<?xml version="1.0"?><speak> ${text} </speak>`
+    const xmlString = `<?xml version="1.0"?><speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+       http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
+       xml:lang="${navigator.language}"><prosody rate="slow"> ${text} </prosody></speak>`
     const xmlDoc = this.parseSSML(xmlString)
     return new XMLSerializer().serializeToString(xmlDoc)
 
