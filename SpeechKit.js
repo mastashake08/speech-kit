@@ -22,36 +22,39 @@ export default class SpeechKit {
     this.utterance = {}
     this.pitch = pitch
     this.rate = rate
-    this.recognition.onstart = function() {
-      const event = new Event('onspeechkitstart');
-      document.dispatchEvent(event)
-    }
-    this.recognition.onresult = function(event) {
-      console.log(event)
-      if(event.results[0].isFinal) {
-        this.resultList = event.results
-        const evt = new CustomEvent('onspeechkitresult', { detail: {
-            transcript: this.resultList[0][0].transcript
-          }
-        });
-        document.dispatchEvent(evt)
-      }
-    }
-    this.recognition.onerror = function(event) {
-      const evt = new CustomEvent('onspeechkiterror', { event: event });
-      document.dispatchEvent(evt)
-    }
-    this.recognition.onspeechend = function() {
-      const event = new Event('onspeechkitend');
-      document.dispatchEvent(event)
-     }
-   }
 
+   }
+   setListeners () {
+     this.recognition.onstart = function() {
+       const event = new Event('onspeechkitstart');
+       document.dispatchEvent(event)
+     }
+     this.recognition.onresult = function(event) {
+       console.log(event)
+       if(event.results[0].isFinal) {
+         this.resultList = event.results
+         const evt = new CustomEvent('onspeechkitresult', { detail: {
+             transcript: this.resultList[0][0].transcript
+           }
+         });
+         document.dispatchEvent(evt)
+       }
+     }
+     this.recognition.onerror = function(event) {
+       const evt = new CustomEvent('onspeechkiterror', { event: event });
+       document.dispatchEvent(evt)
+     }
+     this.recognition.onspeechend = function() {
+       const event = new Event('onspeechkitend');
+       document.dispatchEvent(event)
+      }
+   }
    /**
     * Start listening for speech recognition.
    */
 
   listen () {
+    this.setListeners()
     this.recognition.start()
   }
 
@@ -224,6 +227,17 @@ export default class SpeechKit {
     } catch (e) {
       alert('There was an error sharing!')
     }
+  }
+  /**
+   * Takes text and returns SSML encoded XML object
+   * @params {string} - Text to convert
+   * @returns {XML Object} - XML DOM object in SSML format
+  */
+  createSSML (text) {
+    const xmlString = `<speak> ${text} </speak>`
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+    return xmlDoc
 
   }
 }
