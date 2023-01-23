@@ -261,6 +261,14 @@ export default class SpeechKit {
     }
   }
 
+  xmlTemplate (text) {
+    const xmlString = `<?xml version="1.0"?><speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+       http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
+       xml:lang="${navigator.language}"><prosody rate="slow"> ${this.parseSentenceSSML(text)} </prosody></speak>`
+       return xmlString
+  }
   /**
    * Takes text and returns SSML encoded XML object
    * @params {string} - Text to convert
@@ -268,11 +276,7 @@ export default class SpeechKit {
   */
 
   createSSML (text) {
-    const xmlString = `<?xml version="1.0"?><speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
-       http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
-       xml:lang="${navigator.language}"><prosody rate="slow"> ${this.parseSentenceSSML(text)} </prosody></speak>`
+    const xmlString = this.xmlTemplate(text)
     const xmlDoc = this.parseSSML(xmlString)
     return new XMLSerializer().serializeToString(xmlDoc)
 
@@ -285,13 +289,13 @@ export default class SpeechKit {
   */
 
   parseSentenceSSML (text) {
-    const segmenterFr = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
+    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
     const string1 = text;
 
-    const iterator1 = segmenterFr.segment(string1)[Symbol.iterator]();
+    const iterator1 = segmenter.segment(string1)[Symbol.iterator]();
     let xmlString = "<p>";
-    ([...segmenterFr.segment(text)]).forEach(seg => {
-      xmlString += `<s> ${seg.segment} </s>`
+    ([...segmenter.segment(text)]).forEach((seg, index) => {
+      xmlString += `<s id="sentence-${index}"> ${seg.segment} </s>`
     })
     xmlString += `</p>`
     return xmlString
@@ -307,19 +311,59 @@ export default class SpeechKit {
   parseSSML (xmlString) {
     try {
       const parser = new DOMParser()
-      const xmlDoc = parser.parseFromString(xmlString, "text/xml")
-
+      const xmlDoc = parser.parseFromString(xmlString, "application/xml")
       const errorNode = xmlDoc.querySelector('parsererror');
+      const errorNode2 = xmlDoc.querySelector('speak')
+      const errorNode3 = xmlDoc.querySelector('break')
+
+
 
       if (errorNode) {
         // parsing failed
-        return xmlString
-      } else {
+        const template = this.xmlTemplate(xmlString)
+        const ssml = parser.parseFromString(template, "application/xml")
+        return ssml
+
+      } else if (errorNode3 !== null) {
+        return xmlDoc
+      } else if (errorNode2 === null){
+        return this.createSSML(xmlString)
+      }
         // parsing succeeded
         return xmlDoc
-      }
     } catch (e) {
       alert(e.message)
     }
+  }
+
+  addBreakSSML (xmlString, sntc, offset, time = 200) {
+    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
+
+
+    const xmlDoc = this.parseSSML(xmlString)
+    const segments = segmenter.segment(xmlString)
+    const segs = Array.from(segments, (seg, index) => {
+      if(seg.segment == sntc) {
+        const idx = `#sentence-${index}`
+
+        const sentence = xmlDoc.querySelector(idx)
+        let parser = new DOMParser();
+        const newBreak = `<break time="${time}ms"/> ${sentence} `
+        let newNode = parser.parseFromString(newBreak, "text/xml");
+
+        let sp1 = document.createElementNS("http://www.w3.org/1999/xhtml","break");
+        sp1.setAttribute('time', `${encodeURIComponent(time+"ms")}`)
+
+        // Get the reference element
+        let sp2 = xmlDoc.querySelector(idx);
+        // Get the parent element
+        let parentDiv = sp2.parentNode;
+
+        // Insert the new element into before sp2
+        parentDiv.insertBefore(sp1, sp2);
+
+      }
+    })
+    return new XMLSerializer().serializeToString(xmlDoc)
   }
 }
