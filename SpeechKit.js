@@ -102,6 +102,10 @@ export default class SpeechKit {
     this.synth.speak(this.utterance)
   }
 
+  shutup () {
+    this.synth.cancel()
+  }
+
   /**
    * Get current SpeechRecognition resultsList.
    * @returns {SpeechRecognitionResultList} - List of Speech Recognition results
