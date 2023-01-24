@@ -266,11 +266,9 @@ export default class SpeechKit {
   }
 
   xmlTemplate (text) {
-    const xmlString = `<?xml version="1.0"?><speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
-       http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
-       xml:lang="${navigator.language}"><prosody rate="slow"> ${this.parseSentenceSSML(text)} </prosody></speak>`
+    const parser = new DOMParser()
+    const xmlString = `<?xml version="1.0"?><speak
+       xml:lang="${navigator.language}"> ${this.parseSentenceSSML(text)}</speak>`
        return xmlString
   }
   /**
@@ -280,10 +278,14 @@ export default class SpeechKit {
   */
 
   createSSML (text) {
-    const xmlString = this.xmlTemplate(text)
-    const xmlDoc = this.parseSSML(xmlString)
-    return new XMLSerializer().serializeToString(xmlDoc)
-
+    const parser = new DOMParser()
+    try {
+      console.log('XML STRING', text)
+      return new XMLSerializer().serializeToString(this.parseSSML(text))
+    } catch (e) {
+      console.log(e)
+      return new XMLSerializer().serializeToString(text)
+    }
   }
 
   /**
@@ -324,17 +326,24 @@ export default class SpeechKit {
 
       if (errorNode) {
         // parsing failed
+        console.log('e1')
         const template = this.xmlTemplate(xmlString)
+        console.log('template', template)
         const ssml = parser.parseFromString(template, "application/xml")
+        console.log('ssml', ssml)
         return ssml
 
       } else if (errorNode3 !== null) {
+        console.log('e2')
         return xmlDoc
       } else if (errorNode2 === null){
+        console.log('e3')
         return this.createSSML(xmlString)
-      }
+      } else {
         // parsing succeeded
-        return xmlDoc
+        console.log('SUCCESS', xmlDoc)
+        return xmlString
+      }
     } catch (e) {
       alert(e.message)
     }
@@ -343,18 +352,12 @@ export default class SpeechKit {
   addBreakSSML (xmlString, sntc, offset, time = 200) {
     const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
 
-
+    console.log('XML STRING', xmlString)
     const xmlDoc = this.parseSSML(xmlString)
     const segments = segmenter.segment(xmlString)
     const segs = Array.from(segments, (seg, index) => {
       if(seg.segment == sntc) {
         const idx = `#sentence-${index}`
-
-        const sentence = xmlDoc.querySelector(idx)
-        let parser = new DOMParser();
-        const newBreak = `<break time="${time}ms"/> ${sentence} `
-        let newNode = parser.parseFromString(newBreak, "application/xml");
-
         let sp1 = document.createElement("break");
         sp1.setAttribute('time', `${encodeURIComponent(time+"ms")}`)
 
@@ -366,6 +369,36 @@ export default class SpeechKit {
         // Insert the new element into before sp2
         sp2.insertBefore(sp1, sp2.childNodes[0].nextSibling);
 
+      }
+    })
+    return new XMLSerializer().serializeToString(xmlDoc)
+  }
+
+  addEmphasisSSML (xmlString, sntc, offset, time = 200) {
+    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
+    const xmlDoc = this.parseSSML(xmlString)
+
+    const segments = segmenter.segment(xmlString)
+    const segs = Array.from(segments, (seg, index) => {
+      if(seg.segment == sntc) {
+        console.log(seg)
+        const idx = `#sentence-${index}`
+        let sp1 = document.createElement("emphasis");
+        sp1.setAttribute('level', 'strong')
+        const txt = document.createTextNode(seg.segment)
+        sp1.appendChild(txt)
+        let sp2 = xmlDoc.querySelector(idx);
+        // Insert the new element into before sp2
+        try {
+          sp2.removeChild(sp2.textNode)
+          sp2.addChild(sp1);
+        } catch {
+          console.log(sp2.firstChild)
+          sp2.replaceChild(sp1, sp2.firstChild)
+        }
+
+
+        return xmlDoc
       }
     })
     return new XMLSerializer().serializeToString(xmlDoc)
