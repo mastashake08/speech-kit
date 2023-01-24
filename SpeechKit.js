@@ -221,7 +221,6 @@ export default class SpeechKit {
       this.utterance = new SpeechSynthesisUtterance(new XMLSerializer().serializeToString(this.parseSSML(text)))
 
     } catch (e) {
-      console.log(e)
       this.utterance = new SpeechSynthesisUtterance(text)
     }
      this.utterance.pitch = this.pitch
@@ -290,10 +289,8 @@ export default class SpeechKit {
     const parser = new DOMParser()
     try {
       const parsed = this.parseSSML(text)
-      console.log('XML STRING::::', parsed)
       return new XMLSerializer().serializeToString(parsed)
     } catch (e) {
-      console.log(e.message)
       return new XMLSerializer().serializeToString(text)
     }
   }
@@ -329,17 +326,12 @@ export default class SpeechKit {
       const errorNode2 = xmlDoc.querySelector('speak')
       const errorNode3 = xmlDoc.querySelector('break')
       if (errorNode) {
-        console.log('1')
         const template = this.xmlTemplate(xmlString)
-        console.log('Template:::', template)
         const ssml = parser.parseFromString(template, "application/xml")
-        console.log('SSML:::', ssml)
         return ssml
       } else if (errorNode3) {
-        console.log('3')
         return xmlDoc
       } else if (!errorNode2){
-        console.log('2')
         return this.createSSML(xmlString)
       } else {
         return xmlString
@@ -405,17 +397,11 @@ export default class SpeechKit {
 
   addSSMLElement (index, options) {
     try {
-      console.log(index)
       if(this.SSMLTagIndicies.has(index)){
-        console.log('GET', this.SSMLTagIndicies.entries())
         const entries = this.SSMLTagIndicies.get(index)
-        console.log(entries)
         this.SSMLTagIndicies.set(index, [entries].push(options))
-        console.log(entries)
       } else {
         this.SSMLTagIndicies.set(index, [options])
-        console.log('GET Else', options)
-
       }
     } catch(e) {
       console.log(e)
