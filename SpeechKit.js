@@ -62,15 +62,17 @@ export default class SpeechKit {
        const event = new Event('onspeechkitend');
        document.dispatchEvent(event)
       }
-
-      this.synth.addEventListener('voiceschanged', () => {
-        const v = this.getVoices()
-        const event = new CustomEvent('onspeechkitvoiceschanged', { detail: {
-            voices: v
-            }
-        })
-        document.dispatchEvent(event)
-      })
+      if (this.synth.onvoiceschanged !== undefined) {
+        // Chrome gets the voices asynchronously so this is needed
+        this.synth.onvoiceschanged = () => {
+          const v = this.getVoices()
+          const event = new CustomEvent('onspeechkitvoiceschanged', { detail: {
+              voices: v
+              }
+          })
+          document.dispatchEvent(event)
+        }
+      }
    }
 
    /**
@@ -219,10 +221,15 @@ export default class SpeechKit {
       this.utterance = new SpeechSynthesisUtterance(new XMLSerializer().serializeToString(this.parseSSML(text)))
 
     } catch (e) {
+      console.log(e)
       this.utterance = new SpeechSynthesisUtterance(text)
     }
      this.utterance.pitch = this.pitch
      this.utterance.rate = this.rate
+     this.utterance.onend = () => {
+       const evt = new Event('onspeechkitutterenceend')
+       document.dispatchEvent(evt)
+    }
   }
 
   /**
