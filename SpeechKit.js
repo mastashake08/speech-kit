@@ -22,8 +22,9 @@ export default class SpeechKit {
     this.utterance = {}
     this.pitch = pitch
     this.rate = rate
-
+    this.SSMLTagIndicies = new Map()
    }
+
    setListeners () {
      this.recognition.onsoundend = function(event) {
        const evt = new CustomEvent('onspeechkitsoundend', { detail: {
@@ -71,6 +72,7 @@ export default class SpeechKit {
         document.dispatchEvent(event)
       })
    }
+
    /**
     * Start listening for speech recognition.
    */
@@ -321,27 +323,15 @@ export default class SpeechKit {
       const errorNode = xmlDoc.querySelector('parsererror');
       const errorNode2 = xmlDoc.querySelector('speak')
       const errorNode3 = xmlDoc.querySelector('break')
-
-
-
       if (errorNode) {
-        // parsing failed
-        console.log('e1')
         const template = this.xmlTemplate(xmlString)
-        console.log('template', template)
         const ssml = parser.parseFromString(template, "application/xml")
-        console.log('ssml', ssml)
         return ssml
-
-      } else if (errorNode3 !== null) {
-        console.log('e2')
+      } else if (errorNode3) {
         return xmlDoc
-      } else if (errorNode2 === null){
-        console.log('e3')
+      } else if (!errorNode2){
         return this.createSSML(xmlString)
       } else {
-        // parsing succeeded
-        console.log('SUCCESS', xmlDoc)
         return xmlString
       }
     } catch (e) {
@@ -351,24 +341,22 @@ export default class SpeechKit {
 
   addBreakSSML (xmlString, sntc, offset, time = 200) {
     const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
-
-    console.log('XML STRING', xmlString)
     const xmlDoc = this.parseSSML(xmlString)
     const segments = segmenter.segment(xmlString)
     const segs = Array.from(segments, (seg, index) => {
       if(seg.segment == sntc) {
+        this.addSSMLElement(index, {
+          elName: 'break',
+          attributes: [{
+            name: 'time',
+            value: '500ms'
+          }]
+        })
         const idx = `#sentence-${index}`
         let sp1 = document.createElement("break");
         sp1.setAttribute('time', `${encodeURIComponent(time+"ms")}`)
-
-        // Get the reference element
         let sp2 = xmlDoc.querySelector(idx);
-        // Get the parent element
-        let parentDiv = sp2.parentNode;
-        console.log(sp2.childNodes[0])
-        // Insert the new element into before sp2
         sp2.insertBefore(sp1, sp2.childNodes[0].nextSibling);
-
       }
     })
     return new XMLSerializer().serializeToString(xmlDoc)
@@ -377,30 +365,51 @@ export default class SpeechKit {
   addEmphasisSSML (xmlString, sntc, offset, time = 200) {
     const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
     const xmlDoc = this.parseSSML(xmlString)
-
     const segments = segmenter.segment(xmlString)
     const segs = Array.from(segments, (seg, index) => {
       if(seg.segment == sntc) {
-        console.log(seg)
         const idx = `#sentence-${index}`
         let sp1 = document.createElement("emphasis");
         sp1.setAttribute('level', 'strong')
         const txt = document.createTextNode(seg.segment)
         sp1.appendChild(txt)
         let sp2 = xmlDoc.querySelector(idx);
-        // Insert the new element into before sp2
         try {
           sp2.removeChild(sp2.textNode)
           sp2.addChild(sp1);
         } catch {
-          console.log(sp2.firstChild)
           sp2.replaceChild(sp1, sp2.firstChild)
         }
-
-
+        this.addSSMLElement(index, {
+          elName: 'emphasis',
+          attributes: [{
+            name: 'level',
+            value: 'moderate'
+            }]
+          })
         return xmlDoc
       }
     })
     return new XMLSerializer().serializeToString(xmlDoc)
+  }
+
+  addSSMLElement (index, options) {
+    try {
+      console.log(index)
+      if(this.SSMLTagIndicies.has(index)){
+        console.log('GET', this.SSMLTagIndicies.entries())
+        const entries = this.SSMLTagIndicies.get(index)
+        console.log(entries)
+        this.SSMLTagIndicies.set(index, [entries].push(options))
+        console.log(entries)
+      } else {
+        this.SSMLTagIndicies.set(index, [options])
+        console.log('GET Else', options)
+
+      }
+    } catch(e) {
+      console.log(e)
+    }
+
   }
 }
