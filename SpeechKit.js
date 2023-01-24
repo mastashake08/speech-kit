@@ -270,7 +270,7 @@ export default class SpeechKit {
   xmlTemplate (text) {
     const parser = new DOMParser()
     const xmlString = `<?xml version="1.0"?><speak
-       xml:lang="${navigator.language}"> ${this.parseSentenceSSML(text)}</speak>`
+       xml:lang="${navigator.language}"> ${this.parseSentenceSSML(text)} </speak>`
        return xmlString
   }
   /**
@@ -282,10 +282,11 @@ export default class SpeechKit {
   createSSML (text) {
     const parser = new DOMParser()
     try {
-      console.log('XML STRING', text)
-      return new XMLSerializer().serializeToString(this.parseSSML(text))
+      const parsed = this.parseSSML(text)
+      console.log('XML STRING::::', parsed)
+      return new XMLSerializer().serializeToString(parsed)
     } catch (e) {
-      console.log(e)
+      console.log(e.message)
       return new XMLSerializer().serializeToString(text)
     }
   }
@@ -297,15 +298,12 @@ export default class SpeechKit {
   */
 
   parseSentenceSSML (text) {
+    let xmlString = ""
     const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
-    const string1 = text;
-
-    const iterator1 = segmenter.segment(string1)[Symbol.iterator]();
-    let xmlString = "<p>";
+    const iterator1 = segmenter.segment(text)[Symbol.iterator]();
     ([...segmenter.segment(text)]).forEach((seg, index) => {
-      xmlString += `<s id="sentence-${index}"> ${seg.segment} </s>`
+        xmlString += `\n <s id="sentence-${index}"> ${seg.segment} </s>`
     })
-    xmlString += `</p>`
     return xmlString
 
   }
@@ -324,18 +322,23 @@ export default class SpeechKit {
       const errorNode2 = xmlDoc.querySelector('speak')
       const errorNode3 = xmlDoc.querySelector('break')
       if (errorNode) {
+        console.log('1')
         const template = this.xmlTemplate(xmlString)
+        console.log('Template:::', template)
         const ssml = parser.parseFromString(template, "application/xml")
+        console.log('SSML:::', ssml)
         return ssml
       } else if (errorNode3) {
+        console.log('3')
         return xmlDoc
       } else if (!errorNode2){
+        console.log('2')
         return this.createSSML(xmlString)
       } else {
         return xmlString
       }
     } catch (e) {
-      alert(e.message)
+      console.log(e)
     }
   }
 
