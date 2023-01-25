@@ -1,10 +1,11 @@
 {
   "name": "@mastashake08/speech-kit",
-  "version": "1.9.7",
+  "version": "2.0.4",
   "description": "Package for simplifying the Speech Recognition and Speech Utterence process.",
   "main": "SpeechKit.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "sh local-build.sh ~/Desktop"
   },
   "repository": {
     "type": "git",

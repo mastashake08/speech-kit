@@ -18,8 +18,8 @@ export default class SpeechKit extends EventTarget {
     this.recognition.lang = language
     this.grammarList = new SpeechGrammarList()
     this.synth = window.speechSynthesis || window.webkitspeechSynthesis
-    this.recognition.continuous = continuous;
-    this.recognition.interimResults = interimResults;
+    this.recognition.continuous = continuous
+    this.recognition.interimResults = interimResults
     this.utterance = new SpeechSynthesisUtterance()
     this.pitch = pitch
     this.rate = rate
@@ -32,43 +32,41 @@ export default class SpeechKit extends EventTarget {
          const evt = new CustomEvent('speechkitsoundend', { detail: {
            event: event
          }})
-         this.dispatchEvent(evt))
+         this.dispatchEvent(evt)
        })
 
        this.recognition.addEventListener('onspeechend', function(event) {
          const evt = new CustomEvent('speechkitspeechend', { detail: {
            event: event
          }})
-         this.dispatchEvent(evt))
+         this.dispatchEvent(evt)
        })
 
        this.recognition.addEventListener('onstart', function() {
-         const event = new Event('speechkitstart');
+         const event = new Event('speechkitstart')
          this.dispatchEvent(event)
        })
 
        this.recognition.addEventListener('onresult', function(event) {
          if(event.results[0].isFinal) {
            this.resultList = event.results
-           const evt = new CustomEvent('speechkitresult', { detail: {
-               results: this.resultList
-             }
-           });
+           const evt = new CustomEvent('speechkitresult', { detail: { results: this.resultList }})
            this.dispatchEvent(evt)
-         })
-       }
+         }
+       })
+
 
        this.recognition.addEventLisenter('onerror', function(event) {
          const evt = new CustomEvent('speechkiterror', {
            detail: {
              event: event
             }
-          });
+          })
          this.dispatchEvent(evt)
        })
 
        this.recognition.addEventLisenter('onspeechend', function() {
-         const event = new Event('speechkitend');
+         const event = new Event('speechkitend')
          this.dispatchEvent(event)
         })
 
@@ -83,7 +81,7 @@ export default class SpeechKit extends EventTarget {
             })
             this.dispatchEvent(event)
           })
-       }
+        }
 
         this.utterance.addEventLisenter('onstart', function (event) {
           const evt = new CustomEvent('speechkitutterancestart', {
@@ -131,7 +129,7 @@ export default class SpeechKit extends EventTarget {
           this.dispatchEvent(evt)
         })
 
-        this.utterance.addEventListener('onmark', (event) {
+        this.utterance.addEventListener('onmark', function(event) {
           const evt = new CustomEvent('speechkitutterancemarked', {
             detail: {
               event:event
@@ -146,12 +144,17 @@ export default class SpeechKit extends EventTarget {
               event:event
             }
           })
+            this.dispatchEvent(evt)
+          })
+        } catch (e){
+          const evt = new CustomEvent('speechkitlistenererror', {
+            detail: {
+              error: e
+            }
+          })
           this.dispatchEvent(evt)
-        })
-     } catch {
-       continue
-     }
-   }
+        }
+      }
 
    /**
     * Start listening for speech recognition.
@@ -340,9 +343,9 @@ export default class SpeechKit extends EventTarget {
     const text = this.getText()
     try {
       if (!navigator.canShare) {
-        const type = "text/plain";
-        const blob = new Blob([text], { type });
-        const data = [new ClipboardItem({ [type]: blob })];
+        const type = "text/plain"
+        const blob = new Blob([text], { type })
+        const data = [new ClipboardItem({ [type]: blob })]
         await navigator.clipboard.write(data)
         alert ('Text copied to clipboard')
       } else {
@@ -387,8 +390,8 @@ export default class SpeechKit extends EventTarget {
 
   parseSentenceSSML (text) {
     let xmlString = ""
-    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
-    const iterator1 = segmenter.segment(text)[Symbol.iterator]();
+    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' })
+    const iterator1 = segmenter.segment(text)[Symbol.iterator]()
     ([...segmenter.segment(text)]).forEach((seg, index) => {
         xmlString += `\n <s id="sentence-${index}"> ${seg.segment} </s>`
     })
@@ -406,7 +409,7 @@ export default class SpeechKit extends EventTarget {
     try {
       const parser = new DOMParser()
       const xmlDoc = parser.parseFromString(xmlString, "application/xml")
-      const errorNode = xmlDoc.querySelector('parsererror');
+      const errorNode = xmlDoc.querySelector('parsererror')
       const errorNode2 = xmlDoc.querySelector('speak')
       const errorNode3 = xmlDoc.querySelector('break')
       if (errorNode) {
@@ -431,7 +434,7 @@ export default class SpeechKit extends EventTarget {
   }
 
   addBreakSSML (xmlString, sntc, offset, time = 200) {
-    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
+    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' })
     const xmlDoc = this.parseSSML(xmlString)
     const segments = segmenter.segment(xmlString)
     const segs = Array.from(segments, (seg, index) => {
@@ -444,30 +447,30 @@ export default class SpeechKit extends EventTarget {
           }]
         })
         const idx = `#sentence-${index}`
-        let sp1 = document.createElement("break");
+        let sp1 = document.createElement("break")
         sp1.setAttribute('time', `${encodeURIComponent(time+"ms")}`)
-        let sp2 = xmlDoc.querySelector(idx);
-        sp2.insertBefore(sp1, sp2.childNodes[0].nextSibling);
+        let sp2 = xmlDoc.querySelector(idx)
+        sp2.insertBefore(sp1, sp2.childNodes[0].nextSibling)
       }
     })
     return new XMLSerializer().serializeToString(xmlDoc)
   }
 
   addEmphasisSSML (xmlString, sntc, offset, time = 200) {
-    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' });
+    const segmenter = new Intl.Segmenter(navigator.language, { granularity: 'sentence' })
     const xmlDoc = this.parseSSML(xmlString)
     const segments = segmenter.segment(xmlString)
     const segs = Array.from(segments, (seg, index) => {
       if(seg.segment == sntc) {
         const idx = `#sentence-${index}`
-        let sp1 = document.createElement("emphasis");
+        let sp1 = document.createElement("emphasis")
         sp1.setAttribute('level', 'strong')
         const txt = document.createTextNode(seg.segment)
         sp1.appendChild(txt)
-        let sp2 = xmlDoc.querySelector(idx);
+        let sp2 = xmlDoc.querySelector(idx)
         try {
           sp2.removeChild(sp2.textNode)
-          sp2.addChild(sp1);
+          sp2.addChild(sp1)
         } catch {
           sp2.replaceChild(sp1, sp2.firstChild)
         }
