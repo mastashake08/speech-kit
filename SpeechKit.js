@@ -1,4 +1,4 @@
-export default class SpeechKit {
+export default class SpeechKit extends EventTarget {
 
   /**
    * Creates a new instance of SpeechKit.
@@ -9,6 +9,7 @@ export default class SpeechKit {
   */
 
   constructor ({continuous = false, interimResults = true, pitch = 1.0, rate = 1.0}) {
+    super()
     let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
     let language = window.navigator.userLanguage || window.navigator.language
@@ -19,60 +20,137 @@ export default class SpeechKit {
     this.synth = window.speechSynthesis || window.webkitspeechSynthesis
     this.recognition.continuous = continuous;
     this.recognition.interimResults = interimResults;
-    this.utterance = {}
+    this.utterance = new SpeechSynthesisUtterance()
     this.pitch = pitch
     this.rate = rate
     this.SSMLTagIndicies = new Map()
    }
 
    setListeners () {
-     this.recognition.onsoundend = function(event) {
-       const evt = new CustomEvent('onspeechkitsoundend', { detail: {
-         event: event
-       }});
-       document.dispatchEvent(evt)
-     }
+     try {
+       this.recognition.addEventListener('onsoundend ', function(event) {
+         const evt = new CustomEvent('speechkitsoundend', { detail: {
+           event: event
+         }})
+         this.dispatchEvent(evt))
+       })
 
-     this.recognition.onspeechend = function(event) {
-       const evt = new CustomEvent('onspeechkitspeechend', { detail: {
-         event: event
-       }});
-       document.dispatchEvent(evt)
-     }
+       this.recognition.addEventListener('onspeechend', function(event) {
+         const evt = new CustomEvent('speechkitspeechend', { detail: {
+           event: event
+         }})
+         this.dispatchEvent(evt))
+       })
 
-     this.recognition.onstart = function() {
-       const event = new Event('onspeechkitstart');
-       document.dispatchEvent(event)
-     }
-     this.recognition.onresult = function(event) {
-       if(event.results[0].isFinal) {
-         this.resultList = event.results
-         const evt = new CustomEvent('onspeechkitresult', { detail: {
-             results: this.resultList
-           }
-         });
-         document.dispatchEvent(evt)
+       this.recognition.addEventListener('onstart', function() {
+         const event = new Event('speechkitstart');
+         this.dispatchEvent(event)
+       })
+
+       this.recognition.addEventListener('onresult', function(event) {
+         if(event.results[0].isFinal) {
+           this.resultList = event.results
+           const evt = new CustomEvent('speechkitresult', { detail: {
+               results: this.resultList
+             }
+           });
+           this.dispatchEvent(evt)
+         })
        }
-     }
-     this.recognition.onerror = function(event) {
-       const evt = new CustomEvent('onspeechkiterror', { event: event });
-       document.dispatchEvent(evt)
-     }
-     this.recognition.onspeechend = function() {
-       const event = new Event('onspeechkitend');
-       document.dispatchEvent(event)
-      }
-      if (this.synth.onvoiceschanged !== undefined) {
-        // Chrome gets the voices asynchronously so this is needed
-        this.synth.onvoiceschanged = () => {
-          const v = this.getVoices()
-          const event = new CustomEvent('onspeechkitvoiceschanged', { detail: {
-              voices: v
-              }
+
+       this.recognition.addEventLisenter('onerror', function(event) {
+         const evt = new CustomEvent('speechkiterror', {
+           detail: {
+             event: event
+            }
+          });
+         this.dispatchEvent(evt)
+       })
+
+       this.recognition.addEventLisenter('onspeechend', function() {
+         const event = new Event('speechkitend');
+         this.dispatchEvent(event)
+        })
+
+       if(this.synth.onvoiceschanged !== undefined) {
+          // Chrome gets the voices asynchronously so this is needed
+        this.synth.addEventListener('onvoiceschanged', function () {
+            const v = this.getVoices()
+            const event = new CustomEvent('speechkitvoiceschanged', {
+              detail: {
+                voices: v
+                }
+            })
+            this.dispatchEvent(event)
           })
-          document.dispatchEvent(event)
-        }
-      }
+       }
+
+        this.utterance.addEventLisenter('onstart', function (event) {
+          const evt = new CustomEvent('speechkitutterancestart', {
+            detail: {
+              event:event
+            }
+          })
+          this.dispatchEvent(evt)
+       })
+
+        this.utterance.addEventListener('onend', function () {
+          const evt = new CustomEvent('speechkitutteranceend', {
+              detail: {
+                event:event
+              }
+            })
+            this.dispatchEvent(evt)
+         })
+
+        this.utterance.addEventListener('onpause', function (event) {
+         const evt = new CustomEvent('speechkitutterancepaused', {
+           detail: {
+             event:event
+           }
+         })
+         this.dispatchEvent(evt)
+        })
+
+        this.utterance.addEventListener('onstart', function (event) {
+          const evt = new CustomEvent('speechkitutterancestarted', {
+            bubbles: true,
+            detail: {
+              event:event
+              }
+            })
+            this.dispatchEvent(evt)
+          })
+
+        this.utterance.addEventListener('onresume', function (event) {
+          const evt = new CustomEvent('speechkitutteranceresumed', {
+            detail: {
+              event:event
+            }
+          })
+          this.dispatchEvent(evt)
+        })
+
+        this.utterance.addEventListener('onmark', (event) {
+          const evt = new CustomEvent('speechkitutterancemarked', {
+            detail: {
+              event:event
+            }
+          })
+          this.dispatchEvent(evt)
+        })
+
+        this.utterance.addEventListener('onboundary', function (event) {
+          const evt = new CustomEvent('speechkitutteranceboundary', {
+            detail: {
+              event:event
+            }
+          })
+          this.dispatchEvent(evt)
+        })
+     } catch {
+       continue
+     }
    }
 
    /**
@@ -108,6 +186,14 @@ export default class SpeechKit {
 
   shutup () {
     this.synth.cancel()
+  }
+
+  pauseSynth () {
+    this.synth.pause()
+  }
+
+  stopSynth () {
+    this.synth.stop()
   }
 
   /**
@@ -218,17 +304,13 @@ export default class SpeechKit {
 
   setSpeechText (text) {
     try {
-      this.utterance = new SpeechSynthesisUtterance(new XMLSerializer().serializeToString(this.parseSSML(text)))
-
+        this.utterance.text = text
     } catch (e) {
-      this.utterance = new SpeechSynthesisUtterance(text)
+      alert(e.message)
     }
      this.utterance.pitch = this.pitch
      this.utterance.rate = this.rate
-     this.utterance.onend = () => {
-       const evt = new Event('onspeechkitutterenceend')
-       document.dispatchEvent(evt)
-    }
+
   }
 
   /**
@@ -289,8 +371,10 @@ export default class SpeechKit {
     const parser = new DOMParser()
     try {
       const parsed = this.parseSSML(text)
+      console.log('XML STRING::::', parsed)
       return new XMLSerializer().serializeToString(parsed)
     } catch (e) {
+      console.log(e.message)
       return new XMLSerializer().serializeToString(text)
     }
   }
@@ -326,12 +410,17 @@ export default class SpeechKit {
       const errorNode2 = xmlDoc.querySelector('speak')
       const errorNode3 = xmlDoc.querySelector('break')
       if (errorNode) {
+        console.log('1')
         const template = this.xmlTemplate(xmlString)
+        console.log('Template:::', template)
         const ssml = parser.parseFromString(template, "application/xml")
+        console.log('SSML:::', ssml)
         return ssml
       } else if (errorNode3) {
+        console.log('3')
         return xmlDoc
       } else if (!errorNode2){
+        console.log('2')
         return this.createSSML(xmlString)
       } else {
         return xmlString
@@ -397,11 +486,17 @@ export default class SpeechKit {
 
   addSSMLElement (index, options) {
     try {
+      console.log(index)
       if(this.SSMLTagIndicies.has(index)){
+        console.log('GET', this.SSMLTagIndicies.entries())
         const entries = this.SSMLTagIndicies.get(index)
+        console.log(entries)
         this.SSMLTagIndicies.set(index, [entries].push(options))
+        console.log(entries)
       } else {
         this.SSMLTagIndicies.set(index, [options])
+        console.log('GET Else', options)
+
       }
     } catch(e) {
       console.log(e)
