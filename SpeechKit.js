@@ -12,6 +12,7 @@ export default class SpeechKit extends EventTarget {
     super()
     let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
+    let SpeechSynthesisUtterance = window.SpeechSynthesisUtterance || window.webkitspeechSynthesisUtterance
     let language = window.navigator.userLanguage || window.navigator.language
     this.resultList = {}
     this.recognition = new SpeechRecognition()
@@ -27,124 +28,126 @@ export default class SpeechKit extends EventTarget {
    }
 
    setListeners () {
+     const that = this
      try {
-       this.recognition.addEventListener('onsoundend ', function(event) {
+       this.recognition.addEventListener('soundend ', function(event) {
          const evt = new CustomEvent('speechkitsoundend', { detail: {
            event: event
          }})
-         this.dispatchEvent(evt)
+         that.dispatchEvent(evt)
        })
 
-       this.recognition.addEventListener('onspeechend', function(event) {
+       this.recognition.addEventListener('speechend', function(event) {
          const evt = new CustomEvent('speechkitspeechend', { detail: {
            event: event
          }})
-         this.dispatchEvent(evt)
+         that.dispatchEvent(evt)
        })
 
-       this.recognition.addEventListener('onstart', function() {
+       this.recognition.addEventListener('start', function() {
          const event = new Event('speechkitstart')
-         this.dispatchEvent(event)
+         that.dispatchEvent(event)
        })
 
-       this.recognition.addEventListener('onresult', function(event) {
+       this.recognition.addEventListener('result', function(event) {
          if(event.results[0].isFinal) {
            this.resultList = event.results
            const evt = new CustomEvent('speechkitresult', { detail: { results: this.resultList }})
-           this.dispatchEvent(evt)
+           that.dispatchEvent(evt)
          }
        })
 
 
-       this.recognition.addEventLisenter('onerror', function(event) {
+       this.recognition.addEventLisenter('error', function(event) {
          const evt = new CustomEvent('speechkiterror', {
            detail: {
              event: event
             }
           })
-         this.dispatchEvent(evt)
+         that.dispatchEvent(evt)
        })
 
-       this.recognition.addEventLisenter('onspeechend', function() {
+       this.recognition.addEventLisenter('speechend', function() {
          const event = new Event('speechkitend')
-         this.dispatchEvent(event)
+         that.dispatchEvent(event)
         })
 
-       if(this.synth.onvoiceschanged !== undefined) {
+       if(that.synth.onvoiceschanged !== undefined) {
           // Chrome gets the voices asynchronously so this is needed
-        this.synth.addEventListener('onvoiceschanged', function () {
+        that.synth.addEventListener('voiceschanged', function () {
             const v = this.getVoices()
             const event = new CustomEvent('speechkitvoiceschanged', {
               detail: {
                 voices: v
                 }
             })
-            this.dispatchEvent(event)
+            that.dispatchEvent(event)
           })
         }
 
-        this.utterance.addEventLisenter('onstart', function (event) {
+        this.utterance.addEventLisenter('start', function (event) {
           const evt = new CustomEvent('speechkitutterancestart', {
+            bubbles: true,
             detail: {
               event:event
             }
           })
-          this.dispatchEvent(evt)
+          that.dispatchEvent(evt)
        })
 
-        this.utterance.addEventListener('onend', function () {
+        this.utterance.addEventListener('end', function () {
           const evt = new CustomEvent('speechkitutteranceend', {
               detail: {
                 event:event
               }
             })
-            this.dispatchEvent(evt)
+            that.dispatchEvent(evt)
          })
 
-        this.utterance.addEventListener('onpause', function (event) {
+        this.utterance.addEventListener('pause', function (event) {
          const evt = new CustomEvent('speechkitutterancepaused', {
            detail: {
              event:event
            }
          })
-         this.dispatchEvent(evt)
+         that.dispatchEvent(evt)
         })
 
-        this.utterance.addEventListener('onstart', function (event) {
+        this.utterance.addEventListener('start', function (event) {
           const evt = new CustomEvent('speechkitutterancestarted', {
             bubbles: true,
             detail: {
               event:event
               }
             })
-            this.dispatchEvent(evt)
+            that.dispatchEvent(evt)
           })
 
-        this.utterance.addEventListener('onresume', function (event) {
+        this.utterance.addEventListener('resume', function (event) {
           const evt = new CustomEvent('speechkitutteranceresumed', {
             detail: {
               event:event
             }
           })
-          this.dispatchEvent(evt)
+          that.dispatchEvent(evt)
         })
 
-        this.utterance.addEventListener('onmark', function(event) {
+        this.utterance.addEventListener('mark', function(event) {
           const evt = new CustomEvent('speechkitutterancemarked', {
             detail: {
               event:event
             }
           })
-          this.dispatchEvent(evt)
+          that.dispatchEvent(evt)
         })
 
-        this.utterance.addEventListener('onboundary', function (event) {
+        this.utterance.addEventListener('boundary', function (event) {
           const evt = new CustomEvent('speechkitutteranceboundary', {
             detail: {
               event:event
             }
           })
-            this.dispatchEvent(evt)
+            that.dispatchEvent(evt)
           })
         } catch (e){
           const evt = new CustomEvent('speechkitlistenererror', {
@@ -152,7 +155,7 @@ export default class SpeechKit extends EventTarget {
               error: e
             }
           })
-          this.dispatchEvent(evt)
+          that.dispatchEvent(evt)
         }
       }
 
@@ -196,7 +199,7 @@ export default class SpeechKit extends EventTarget {
   }
 
   stopSynth () {
-    this.synth.stop()
+    this.synth.cancel()
   }
 
   /**
