@@ -1,6 +1,6 @@
 {
   "name": "@mastashake08/speech-kit",
-  "version": "2.0.6",
+  "version": "2.0.8",
   "description": "Package for simplifying the Speech Recognition and Speech Utterence process.",
   "main": "SpeechKit.js",
   "scripts": {
