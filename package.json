@@ -37,6 +37,6 @@
   },
   "homepage": "https://github.com/mastashake08/speech-kit#readme",
   "devDependencies": {
-    "jsdoc-to-markdown": "^8.0.0"
+    "jsdoc-to-markdown": "^9.1.2"
   }
 }
